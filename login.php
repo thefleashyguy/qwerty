@@ -10,7 +10,7 @@ $time = time();
 $payload = ['sub'=>'Joe','username'=>$username, 'password'=>$password,'iat'=>$time];
 $enpayload = base64(json_encode($payload));
 $secret = 'f3cdf4bbf206f5d572c6db13757c06fe';
-$hash = hash_hmac('SHA256',"$enheaders.$$enpayload",$secret,true);
+$hash = hash_hmac('SHA256',"$enheaders.$enpayload",$secret,true);
 $signature = base64($hash);
 $jwt = "$enheaders.$enpayload.$signature";
 ###################################################
