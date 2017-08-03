@@ -2,8 +2,9 @@
 function base64($data) {
     return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 }
-$username = "test";
-$password = "test";
+$username = $_GET['username'];
+$password = $_GET['password'];
+$proxy = $_GET['proxy'];
 $header = ['alg'=>'HS256','typ'=>'JWT'];
 $enheaders = base64(json_encode($header));
 $time = time();
@@ -52,6 +53,7 @@ if(eregi('"code":200', $rescasper))
 		curl_setopt($snapchat, CURLOPT_URL, "https://app.snapchat.com/loq/login");
 		curl_setopt($snapchat, CURLOPT_SSL_VERIFYPEER, true);
 		curl_setopt($snapchat, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($snapchat, CURLOPT_PROXY, $proxy);
 		curl_setopt($snapchat, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($snapchat, CURLOPT_HEADER, 1);
 		curl_setopt($snapchat, CURLOPT_HTTPHEADER, array(
