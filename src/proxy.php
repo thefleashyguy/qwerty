@@ -36,7 +36,7 @@ if(eregi('"code":200', $rescasper))
 	{
 		$startauth = explode('"X-Snapchat-Client-Auth-Token":"' , $rescasper );
 		$endauth = explode('"' , $startauth[1] );
-		$auth = $endauth[0];
+		$auth = $endauth[0]; 
 		###################### "X-Snapchat-Client-Token":"
 		$starttoken = explode('"X-Snapchat-Client-Token":"' , $rescasper );
 		$endtoken = explode('"' , $starttoken[1] );
