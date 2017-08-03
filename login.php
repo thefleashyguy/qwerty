@@ -14,9 +14,6 @@ $hash = hash_hmac('SHA256',"$enheaders.$enpayload",$secret,true);
 $signature = base64($hash);
 $jwt = "$enheaders.$enpayload.$signature";
 ###################################################
-<?
-$username = $_GET['u'];
-$password = $_GET['p'];
 $casper = curl_init();
 curl_setopt($casper, CURLOPT_URL, "https://casper-api.herokuapp.com/snapchat/ios/login");
 curl_setopt($casper, CURLOPT_SSL_VERIFYPEER, true);
