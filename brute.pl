@@ -48,6 +48,9 @@ if ($do == 1){
 	> );
 	$proxylist=<STDIN>;
 	chomp($proxylist);
+	open (PROXYFILE, "<$proxylist") || die "[-] Can't Found The List Of Proxys !";
+	@PROXY = <PROXYFILE>;
+	close PROXYFILE;
 	######################
 		foreach $user (@USERS) {
 		chomp $user;
