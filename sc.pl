@@ -114,7 +114,7 @@ chomp $username;
 				}
 			}
 			else {
-				print "JWT [Casper API] Error";
+				print "JWT [Casper API] Error\n";
 			}
 		
 	}
