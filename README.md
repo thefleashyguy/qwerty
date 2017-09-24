@@ -1,5 +1,5 @@
 # SnapBrute
-Brute Force SnapChat [Casper API]<br>
+Brute Force SnapChat [Snapchat old API]<br>
 ////////////<br>
 Coded By 1337r00t<br><br>
 Instagram : 1337r00t <br>
