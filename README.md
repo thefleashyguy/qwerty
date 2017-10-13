@@ -1,5 +1,14 @@
 # SnapBrute
-Brute Force SnapChat [Snapchat old API]<br>
+Brute Force SnapChat [Casper API]<br>
+<br>
+<font color="red">
+  Install JsonWebToken on perl [Windows-Linux]<br>
+  <br>
+</font>
+<font color="blue">
+  input in cmd :-
+  ppm install JSON::WebToken
+</font><br>
 ////////////<br>
 Coded By 1337r00t<br><br>
 Instagram : 1337r00t <br>
