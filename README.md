@@ -1,14 +1,6 @@
-# SnapBrute v4
-<img src="https://a.top4top.net/p_659qj00e0.jpg">
-هذه الأداة مجانية ومقدمة من الجيش الألكتروني للجميع
+# SnapBrute v5
 <br>
-مشروع خاص لأاختراق حسابات السناب شات عن طريق ثغرات حقيقة خاصة للجيش الألكتروني السعودي
-<br>
-http://snapbr0k3n.1337leaks.info/index.php
-<br>
-قريبا !..
-<br>
-Brute Force SnapChat [Casper API]<br>
+Brute Force SnapChat [SnapChat API]<br>
 <br>
 <font color="red">
   Install JsonWebToken on perl [Windows-Linux]<br>
