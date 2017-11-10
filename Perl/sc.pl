@@ -4,7 +4,7 @@ system('cls');
 system('color 5');
 print qq(
 ################################
-# BruteForce SC using (Capser) #
+#BruteForce SC using (Snapchat)#
 ################################
 #     Coded By 1337r00t        #
 ################################
