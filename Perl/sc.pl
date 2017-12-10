@@ -81,8 +81,10 @@ chomp $password;
 					}
 					else
 					{
-						print $response->content();
-						print "\n";
+						if($response->content=~/Due to repeated failed login attempts or other suspicious activity/){
+							print "\n-----\nSorry, your ip [Blocked]\nwait to bypass blocked !...\n-----\n";
+							sleep(18);
+						}
 					}
 				}
 			}
